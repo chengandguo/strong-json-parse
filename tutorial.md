@@ -45,8 +45,11 @@ chore : 构建过程或辅助工具的变动
   npx husky install
 ```
 ## create a hook
+1.commit 信息规范
+2.commit 提交前运行eslint检查
 ```
   npx husky add .husky/commit-msg 'npx --no -- commitlint --edit $1'
+  npx husky add .husky/pre-commit 'npm run eslint:fix'
 ```
 
 # 关于npm prepare的执行时机

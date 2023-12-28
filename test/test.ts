@@ -1,7 +1,7 @@
-import head from "../src/head";
+import jsonParse1 from "../src/json-parse";
 
+const jsonParse = jsonParse1({ storeAsString: true });
 
-test("head test", () => {
-  expect(head([1, 2, 3])).toBe(1);
-  expect(head([])).toBe(undefined);
+test("json parse test", () => {
+  expect(jsonParse(`{ "a": 1, "b": 1.123456789987654321}`)).toBe(1);
 });

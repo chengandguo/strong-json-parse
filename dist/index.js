@@ -674,4 +674,3 @@ function jsonStringifyByJsonSchema(obj, jsonSchema, space) {
 }
 
 export { jsonParse, jsonStringify, jsonStringifyByDataSchema, jsonStringifyByJsonSchema };
-//# sourceMappingURL=index.js.map

@@ -4,7 +4,7 @@ import serve from "rollup-plugin-serve";
 
 const serverConfig = {
   open: true,
-  openPage: '/document/index.html',
+  openPage: "/document/index.html",
   port: "9000",
 };
 
@@ -14,17 +14,15 @@ export default {
     {
       file: "./lib/index.js",
       format: "esm",
-      sourcemap: true
+      sourcemap: true,
     },
     {
       file: "./lib/bundle.min.js",
       format: "iife",
-      name: "Lib",   // need config 
+      name: "StrongJsonParse", // need config
       sourcemap: true,
-      plugins:[
-        serve(serverConfig)
-      ]
-    }
+      plugins: [serve(serverConfig)],
+    },
   ],
-  plugins: [ typescript() ],
+  plugins: [typescript()],
 };

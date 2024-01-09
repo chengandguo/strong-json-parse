@@ -2,8 +2,8 @@
   "name": "rollup-scaffold",
   "version": "1.0.0",
   "description": "utils rollup scaffold",
-  "main": "lib/index.js",
-  "module": "lib/index.js",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
   "scripts": {
     "prepare": "npx husky install && npx husky add .husky/commit-msg 'npx --no -- commitlint --edit $1' && npx husky add .husky/pre-commit 'npm run eslint:fix'",
     "start": "npx rollup --config rollup.config.dev.mjs --watch",
@@ -13,8 +13,15 @@
     "eslint": "npx eslint 'src/**/*.{ts,js}'",
     "eslint:fix": "npx eslint --fix 'src/**/*.{ts,js}'"
   },
-  "keywords": [],
   "author": "Joey",
+  "keywords": [
+    "JSON",
+    "bigint",
+    "parse",
+    "json",
+    "stringify",
+    "json schema"
+  ],
   "license": "ISC",
   "devDependencies": {
     "@babel/core": "^7.23.6",

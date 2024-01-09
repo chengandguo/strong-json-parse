@@ -1,66 +1,19 @@
+import extractObjValue from "./utils/extract-obj-value";
+
 /*
-    jsonParse.js
-    2012-06-20
-
-    Public Domain.
-
-    NO WARRANTY EXPRESSED OR IMPLIED. USE AT YOUR OWN RISK.
-
-    This file creates a jsonParse function.
-    During create you can (optionally) specify some behavioural switches
-
-        require('json-bigint')(options)
-
-            The optional options parameter holds switches that drive certain
-            aspects of the parsing process:
-            * options.strict = true will warn about duplicate-key usage in the json.
-              The default (strict = false) will silently ignore those and overwrite
-              values for keys that are in duplicate use.
-
-    The resulting function follows this signature:
-        jsonParse(text, reviver)
-            This method parses a JSON text to produce an object or array.
-            It can throw a SyntaxError exception.
-
-            The optional reviver parameter is a function that can filter and
-            transform the results. It receives each of the keys and values,
-            and its return value is used instead of the original value.
-            If it returns what it received, then the structure is not modified.
-            If it returns undefined then the member is deleted.
-
-            Example:
-
-            // Parse the text. Values that look like ISO date strings will
-            // be converted to Date objects.
-
-            myData = jsonParse(text, function (key, value) {
-                var a;
-                if (typeof value === 'string') {
-                    a =
-/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*)?)Z$/.exec(value);
-                    if (a) {
-                        return new Date(Date.UTC(+a[1], +a[2] - 1, +a[3], +a[4],
-                            +a[5], +a[6]));
-                    }
-                }
-                return value;
-            });
-
-    This is a reference implementation. You are free to copy, modify, or
-    redistribute.
-
-    This code should be minified before deployment.
-    See http://javascript.crockford.com/jsmin.html
-
-    USE YOUR OWN COPY. IT IS EXTREMELY UNWISE TO LOAD CODE FROM SERVERS YOU DO
-    NOT CONTROL.
-*/
-
 /*members "", "\"", "\/", "\\", at, b, call, charAt, f, fromCharCode,
     hasOwnProperty, message, n, name, prototype, push, r, t, text
 */
 
-const jsonParse = function (options) {
+interface IOptions {
+  strict?: boolean; // not being strict means do not generate syntax errors for "duplicate key", default is false
+  storeAsString?: boolean; // toggles whether the values should be stored as BigNumber (default) or a string, default is false
+  alwaysParseAsBigInt?: boolean; // toggles whether all numbers should be BigInt Type, default is false
+  protoAction?: "error" | "ignore" | "preserve"; // whether keep __proto__ property, default is "error", not allowed
+  constructorAction?: "error" | "ignore" | "preserve"; // whether keep constructor property, default is "error", not allowed
+}
+
+const jsonParse = function (source: string, options?: IOptions) {
   // regexpxs extracted from
   // (c) BSD-3-Clause
   // https://github.com/fastify/secure-json-parse/graphs/contributors and https://github.com/hapijs/bourne/graphs/contributors
@@ -75,15 +28,11 @@ const jsonParse = function (options) {
   // eval or regular expressions, so it can be used as a model for implementing
   // a JSON parser in other languages.
 
-  // We are defining the function inside of another function to avoid creating
-  // global variables.
-
   // Default options one can override by passing options to the parse()
   const _options = {
     strict: false, // not being strict means do not generate syntax errors for "duplicate key"
     storeAsString: false, // toggles whether the values should be stored as BigNumber (default) or a string
-    alwaysParseAsBig: false, // toggles whether all numbers should be Big
-    useNativeBigInt: false, // toggles whether to use native BigInt instead of bignumber.js
+    alwaysParseAsBigInt: false, // toggles whether all numbers should be BigInt Type
     protoAction: "error",
     constructorAction: "error",
   };
@@ -96,10 +45,10 @@ const jsonParse = function (options) {
     if (options.storeAsString === true) {
       _options.storeAsString = true;
     }
-    _options.alwaysParseAsBig =
-      options.alwaysParseAsBig === true ? options.alwaysParseAsBig : false;
-    _options.useNativeBigInt =
-      options.useNativeBigInt === true ? options.useNativeBigInt : false;
+    _options.alwaysParseAsBigInt =
+      options.alwaysParseAsBigInt === true
+        ? options.alwaysParseAsBigInt
+        : false;
 
     if (typeof options.constructorAction !== "undefined") {
       if (
@@ -155,7 +104,7 @@ const jsonParse = function (options) {
     };
   };
 
-  const next = function (c) {
+  const next = function (c?) {
     // If a c parameter is provided, verify that it matches the current character.
 
     if (c && c !== ch) {
@@ -211,7 +160,7 @@ const jsonParse = function (options) {
       }
 
       if (Number.isSafeInteger(number))
-        if (_options.alwaysParseAsBig) {
+        if (_options.alwaysParseAsBigInt) {
           return {
             type: "number",
             originType: "number",
@@ -277,7 +226,7 @@ const jsonParse = function (options) {
   };
 
   const white = function () {
-    // Skip whitespace.
+    // Skip whitespace and control characters like LF(line feed) '\n' or CR(carriage return) '\r'
 
     while (ch && ch <= " ") {
       next();
@@ -346,7 +295,6 @@ const jsonParse = function (options) {
 
     let key;
     const object = { type: "object", originType: "object", value: {} };
-
     if (ch === "{") {
       next("{");
       white();
@@ -400,8 +348,8 @@ const jsonParse = function (options) {
   value = function () {
     // Parse a JSON value. It could be an object, an array, a string, a number,
     // or a word.
-
-    white(); // skip initial space
+    // debugger;
+    white();
     switch (ch) {
       case "{":
         return object();
@@ -419,18 +367,17 @@ const jsonParse = function (options) {
   // Return the jsonParse function. It will have access to all of the above
   // functions and variables.
 
-  return function (source) {
-    text = source + "";
-    at = 0;
-    ch = " ";
-    const result = value();
-    white();
-    if (ch) {
-      error("Syntax error");
-    }
+  text = source + "";
+  at = 0;
+  ch = " ";
+  const dataSchema = value();
+  const data = extractObjValue(dataSchema);
+  white();
+  if (ch) {
+    error("Syntax error");
+  }
 
-    return result;
-  };
+  return { data, dataSchema };
 };
 
 export default jsonParse;

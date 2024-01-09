@@ -1,22 +1,46 @@
-console.log(Lib);
+const {
+  jsonParse,
+  jsonStringifyByType,
+  jsonStringify,
+  jsonStringifyByDataSchema,
+  jsonStringifyByJsonSchema,
+} = window.StrongJsonParse;
 
-const jsonParse = Lib.jsonParse({ storeAsString: true });
-const jsonStringifyByType = Lib.jsonStringifyByType;
 /* 
   safe integer 
   [-(2**53-1), 2**53-1]  => [-9007199254740991, 9007199254740991]
 */
-const obj = `
-  {
-    "a": 1,
-    "b": 12345678998765432199988777665,
-    "c": [1, 2, 3, null, false, true, "abc"],
-    "d": 1.123456789987654321458936
-  }
-`;
 
-const result = jsonParse(obj);
-console.log("result: ", result);
+// const jsonSchema = {
+//   type: "object",
+//   properties: {
+//     id: {
+//       type: "number",
+//       title: "id of question",
+//     },
+//     title: {
+//       type: "string",
+//       title: "title of question",
+//     },
+//     choices: {
+//       type: "array",
+//       title: "choice list",
+//       items: {
+//         type: "string",
+//         title: "choice item",
+//       },
+//     },
+//   },
+// };
 
-const jsonStr = jsonStringifyByType(result);
-console.log("jsonStr: ", jsonStr);
+// const data = {
+//   id: "123", // origin type is number
+//   title: "The three largest countries by area",
+//   choices: ["China", "Russia", "America", "Canada"],
+// };
+
+// console.log(jsonStringifyByJsonSchema(data, jsonSchema, 2));
+
+const str = `{"id":123456989987654321,"name":"joey","interests":["football","video games"]}`;
+const result = jsonParse(str, { storeAsString: true });
+console.log(result);

@@ -1,7 +1,9 @@
 {
   "compilerOptions": {
     "module": "ESNext",
-    "target": "ESNext"
+    "target": "ESNext",
+    "declaration": true /* 生成相关的 '.d.ts' 文件。 */,
+    "declarationDir": "./dist/types" /* '.d.ts' 文件输出目录 */
   },
 
   "include": ["src/**/*", "test/**/*"]

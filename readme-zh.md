@@ -1,4 +1,4 @@
-# strong json parse
+# 功能
 
 基于[json-bigint](https://www.npmjs.com/package/json-bigint)，增加了任意精度小数与`bigInt`数字的支持
 
@@ -18,11 +18,12 @@ console.log(result);
 ```
 
 output
+其中 id 原来数据类型为`number`, 现在被存储为`string`
 
 ```json
 {
   "data": {
-    "id": "123456989987654321", // id被存储为字符串
+    "id": "123456989987654321",
     "name": "joey",
     "interests": ["football", "video games"]
   },
@@ -61,12 +62,12 @@ output
 }
 ```
 
-# 方法 jsonParse(str: string, options: IOptions)
+### 方法 jsonParse(str: string, options: IOptions)
 
 将 JSON 字符串转换为对象，返回{ data, dataSchema } 对象
 其中 data 表示原始的 JSON 对象，而 dataSchema 则包含了每个 value 的转换前和转换后的数据类型，请查看下面示例
 
-## 参数
+#### 参数
 
 str: JSON 字符串
 options：
@@ -156,7 +157,7 @@ interface IOptions {
 
 ```
 
-# 方法 jsonStringifyByDataSchema(obj: unknown,schema: ISchema, space: number | string)
+### 方法 jsonStringifyByDataSchema(obj: unknown,schema: ISchema, space: number | string)
 
 功能：依据 dataSchema 提供的数据类型将 obj 对象序列化
 **<span style="color: red;">注意：这里要求 obj 与 schema 具有相同的结构</span>**
@@ -166,7 +167,7 @@ interface IOptions {
 - 如果是对象，新增 key 会无法判定数据类型
   如果你的对象需要上述操作，请使用`jsonStringifyByJsonSchema`方法
 
-## 参数说明
+#### 参数说明
 
 obj：待序列化的对象
 schema: `jsonParse` 生成的 `dataSchema` 对象
@@ -210,16 +211,16 @@ console.log(jsonStringifyByDataSchema(data, dataSchema, 2));
 }
 ```
 
-# 方法 jsonStringifyByJsonSchema(obj: unknown, jsonSchema: ISchema, space: number | string)
+### 方法 jsonStringifyByJsonSchema(obj: unknown, jsonSchema: ISchema, space: number | string)
 
 根据通用的 [JSON Schema](https://json-schema.org/) 协议转换数据类型，
 如果当前字段为`string`，则判断`schema`是否为`number`，如果为`number`则转换，否则不转换。
 
-## 为什么使用通用的 JSON Schema
+#### 为什么使用通用的 JSON Schema
 
 在对数据增加字段或者数组增加一项时，使用通用的 JSON Schema 约束数据类型
 
-## 参数说明
+#### 参数说明
 
 obj：待序列化的对象
 schema: 通用 JSON schema 协议
@@ -270,6 +271,6 @@ console.log(jsonStringifyByJsonSchema(data, jsonSchema, 2));
 }
 ```
 
-# 方法 jsonStringify(value, replacer, space)
+### 方法 jsonStringify(value, replacer, space)
 
 通用的 JSON.stringify 方法实现，用法一致

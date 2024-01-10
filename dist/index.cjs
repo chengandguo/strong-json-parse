@@ -1,3 +1,5 @@
+'use strict';
+
 const DATA_TYPE = {
     STRING: "string",
     NUMBER: "number",
@@ -673,5 +675,7 @@ function jsonStringifyByJsonSchema(obj, jsonSchema, space) {
     return jsonStringify(obj, jsonSchema);
 }
 
-export { jsonParse, jsonStringify, jsonStringifyByDataSchema, jsonStringifyByJsonSchema };
-//# sourceMappingURL=index.js.map
+exports.jsonParse = jsonParse;
+exports.jsonStringify = jsonStringify;
+exports.jsonStringifyByDataSchema = jsonStringifyByDataSchema;
+exports.jsonStringifyByJsonSchema = jsonStringifyByJsonSchema;
